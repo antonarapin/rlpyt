@@ -42,7 +42,7 @@ def build_and_train(env_id="RLMM", run_ID=0, cuda_idx=None):
     )
     config = dict(env_id=env_id)
     name = "sac_" + env_id
-    log_dir = "example_2"
+    log_dir = "rlmm_example"
     with logger_context(log_dir, run_ID, name, config):
         runner.train()
 
