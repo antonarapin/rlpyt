@@ -173,6 +173,7 @@ def make(*args, info_example=None, **kwargs):
         from rlmm.utils.config import Config
         config = Config.load_yaml('path/to/test_config.yaml')
         env = OpenMMEnv(OpenMMEnv.Config(config.configs))
+        env = GymEnvWrapper(env)
         return env
     if info_example is None:
         return GymEnvWrapper(gym.make(*args, **kwargs))
