@@ -165,6 +165,15 @@ def make(*args, info_example=None, **kwargs):
     rlpyt's ``GymEnvWrapper``, using ``gym.make(*args, **kwargs)``.  If
     ``info_example`` is not ``None``, will include the ``EnvInfoWrapper``.
     """
+    if kwargs['id'] == 'RLMM':
+        import rlmm.environment.openmmEnv
+        import rlmm.environment.openmmWrapper
+        import rlmm.environment.systemloader
+        from rlmm.environment.openmmEnv import OpenMMEnv
+        from rlmm.utils.config import Config
+        config = Config.load_yaml('path/to/test_config.yaml')
+        env = OpenMMEnv(OpenMMEnv.Config(config.configs))
+        return env
     if info_example is None:
         return GymEnvWrapper(gym.make(*args, **kwargs))
     else:
