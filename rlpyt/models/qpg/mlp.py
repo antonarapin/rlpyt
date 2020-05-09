@@ -32,6 +32,8 @@ class MuMlpModel(torch.nn.Module):
         return mu
 
 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# No discount
 class PiMlpModel(torch.nn.Module):
     """Action distrubition MLP model for SAC agent."""
 
@@ -47,18 +49,21 @@ class PiMlpModel(torch.nn.Module):
         self.mlp = MlpModel(
             input_size=int(np.prod(observation_shape)),
             hidden_sizes=hidden_sizes,
-            output_size=action_size * 2,
+            output_size=action_size * 2, # <<<<<<<<<<<<<<<<<<<<<<<<<<<<< OUTPUT is 2x action_size
         )
 
     def forward(self, observation, prev_action, prev_reward):
+        # import pdb; pdb.set_trace()
+
         lead_dim, T, B, _ = infer_leading_dims(observation,
             self._obs_ndim)
+        # python breakpoint - import pdb.set_trace <-
         output = self.mlp(observation.view(T * B, -1))
         mu, log_std = output[:, :self._action_size], output[:, self._action_size:]
         mu, log_std = restore_leading_dims((mu, log_std), lead_dim, T, B)
         return mu, log_std
 
-
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 class QofMuMlpModel(torch.nn.Module):
     """Q portion of the model for DDPG, an MLP."""
 
@@ -78,6 +83,8 @@ class QofMuMlpModel(torch.nn.Module):
         )
 
     def forward(self, observation, prev_action, prev_reward, action):
+        # import pdb; pdb.set_trace() #>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRACE
+
         lead_dim, T, B, _ = infer_leading_dims(observation,
             self._obs_ndim)
         q_input = torch.cat(

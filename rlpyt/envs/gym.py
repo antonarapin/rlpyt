@@ -35,7 +35,8 @@ class GymEnvWrapper(Wrapper):
             act_null_value=0, obs_null_value=0, force_float32=True):
         super().__init__(env)
         o = self.env.reset()
-        o, r, d, info = self.env.step(self.env.action_space.sample())
+        # import pdb; pdb.set_trace()
+        o, r, d, info = self.env.step(np.random.randint(0, 2, self.env.action_space.n)) #self.env.action_space.sample())#<<<<<<<<<<<<<<<<<<<<<<<<
         env_ = self.env
         time_limit = isinstance(self.env, TimeLimit)
         while not time_limit and hasattr(env_, "env"):
@@ -171,7 +172,7 @@ def make(*args, info_example=None, **kwargs):
         import rlmm.environment.systemloader
         from rlmm.environment.openmmEnv import OpenMMEnv
         from rlmm.utils.config import Config
-        config = Config.load_yaml('path/to/test_config.yaml')
+        config = Config.load_yaml('./test_config.yaml')
         env = OpenMMEnv(OpenMMEnv.Config(config.configs))
         env = GymEnvWrapper(env)
         return env

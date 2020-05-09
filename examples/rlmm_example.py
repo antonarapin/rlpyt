@@ -44,6 +44,7 @@ def build_and_train(env_id="RLMM", run_ID=0, cuda_idx=None):
     name = "sac_" + env_id
     log_dir = "rlmm_example"
     with logger_context(log_dir, run_ID, name, config):
+        import pdb; pdb.set_trace()
         runner.train()
 
 
@@ -58,4 +59,4 @@ if __name__ == "__main__":
         env_id=args.env_id,
         run_ID=args.run_ID,
         cuda_idx=args.cuda_idx,
-    )
+    ) # try '0' -- else look into velu docs

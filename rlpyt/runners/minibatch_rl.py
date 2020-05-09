@@ -70,9 +70,9 @@ class MinibatchRlBase(BaseRunner):
             self.seed = make_seed()
         set_seed(self.seed)
         self.rank = rank = getattr(self, "rank", 0)
-        self.world_size = world_size = getattr(self, "world_size", 1)
+        self.world_size = world_size = getattr(self, "world_size", 1)#; import pdb; pdb.set_trace() # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRACE 
         examples = self.sampler.initialize(
-            agent=self.agent,  # Agent gets initialized in sampler.
+            agent=self.agent,  # Agent gets initialized in sampler. <<<<<<<<<<<<<<<<<<<<<<<< AGENT!!!
             affinity=self.affinity,
             seed=self.seed + 1,
             bootstrap_value=getattr(self.algo, "bootstrap_value", False),
@@ -94,7 +94,7 @@ class MinibatchRlBase(BaseRunner):
             world_size=world_size,
             rank=rank,
         )
-        self.initialize_logging()
+        self.initialize_logging()#; pdb.set_trace() # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRACE
         return n_itr
 
     def get_traj_info_kwargs(self):

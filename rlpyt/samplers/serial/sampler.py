@@ -40,6 +40,8 @@ class SerialSampler(BaseSampler):
         Returns a structure of inidividual examples for data fields such as `observation`,
         `action`, etc, which can be used to allocate a replay buffer.
         """
+        #import pdb; pdb.set_trace() #>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRACE
+
         B = self.batch_spec.B
         envs = [self.EnvCls(**self.env_kwargs) for _ in range(B)]
 
@@ -48,13 +50,17 @@ class SerialSampler(BaseSampler):
         global_B = B * world_size
         env_ranks = list(range(rank * B, (rank + 1) * B))
         agent.initialize(envs[0].spaces, share_memory=False,
-            global_B=global_B, env_ranks=env_ranks)
+            global_B=global_B, env_ranks=env_ranks) #<<<<<<<<<<<<<<<<<<<<<<<<< Agent Init.
+
         samples_pyt, samples_np, examples = build_samples_buffer(agent, envs[0],
             self.batch_spec, bootstrap_value, agent_shared=False,
             env_shared=False, subprocess=False)
-        if traj_info_kwargs:
+
+        if traj_info_kwargs:  # discount!
             for k, v in traj_info_kwargs.items():
                 setattr(self.TrajInfoCls, "_" + k, v)  # Avoid passing at init.
+
+        # check out
         collector = self.CollectorCls(
             rank=0,
             envs=envs,
@@ -78,6 +84,8 @@ class SerialSampler(BaseSampler):
                 max_trajectories=self.eval_max_trajectories,
             )
 
+        # import pdb; pdb.set_trace() # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRACE
+
         agent_inputs, traj_infos = collector.start_envs(
             self.max_decorrelation_steps)
         collector.start_agent()
@@ -88,7 +96,7 @@ class SerialSampler(BaseSampler):
         self.collector = collector
         self.agent_inputs = agent_inputs
         self.traj_infos = traj_infos
-        logger.log("Serial Sampler initialized.")
+        logger.log("Serial Sampler initialized.")#; pdb.set_trace() # >>>>>>>>>>>>>>>>>>>>>> TRACE
         return examples
 
     def obtain_samples(self, itr):
@@ -96,6 +104,7 @@ class SerialSampler(BaseSampler):
         Return data in torch tensors, and a list of trajectory-info objects from
         episodes which ended.
         """
+        # import pdb; pdb.set_trace() # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRACE
         # self.samples_np[:] = 0  # Unnecessary and may take time.
         agent_inputs, traj_infos, completed_infos = self.collector.collect_batch(
             self.agent_inputs, self.traj_infos, itr)

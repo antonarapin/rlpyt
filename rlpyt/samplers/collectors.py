@@ -78,6 +78,7 @@ class DecorrelatingStartCollector(BaseCollector):
     """
 
     def start_envs(self, max_decorrelation_steps=0):
+        # import pdb; pdb.set_trace()
         """Calls ``reset()`` on every environment instance, then steps each
         one through a random number of random actions, and returns the
         resulting agent_inputs buffer (`observation`, `prev_action`,
@@ -89,8 +90,12 @@ class DecorrelatingStartCollector(BaseCollector):
         observation = buffer_from_example(observations[0], len(self.envs))
         for b, obs in enumerate(observations):
             observation[b] = obs  # numpy array or namedarraytuple
-        prev_action = np.stack([env.action_space.null_value()
+        # prev_action = np.stack([env.action_space.null_value() # hmmmmmmmmmmmmmmmm....... <<<< MODIFIED BC DISCRECTE GIVES array(0)
+        #     for env in self.envs])
+        prev_action = np.stack([np.zeros(self.envs[0].action_space.n, dtype="float32")
             for env in self.envs])
+        # prev_action = np.zeros(self.envs[0].action_space.n, dtype="float32") #<<<<<<<<<<<<<<<<<<<<< assuming just one init. environment...
+        # prev_reward = np.zeros(self.envs[0].action_space.n, dtype="float32") #<<<<<<<<<<<<<<<<<<<<< reward for each action??
         prev_reward = np.zeros(len(self.envs), dtype="float32")
         if self.rank == 0:
             logger.log("Sampler decorrelating envs, max steps: "
@@ -106,10 +111,15 @@ class DecorrelatingStartCollector(BaseCollector):
                         o = env.reset()
                         traj_infos[b] = self.TrajInfoCls()
                     if d:
-                        a = env.action_space.null_value()
+                        # a = env.action_space.null_value()
+                        a = np.zeros(self.envs[0].action_space.n, dtype="float32") # <<<<<<<<<<<<<<<<<<<<<< modified
                         r = 0
+                        # r = np.zeros(self.envs[0].action_space.n, dtype="float32") #<<<<<<<<<<<<<<<<<<<<< reward for each action??
+
+                # import pdb; pdb.set_trace()
                 observation[b] = o
                 prev_action[b] = a
+                # prev_reward[b] = np.full(self.envs[0].action_space.n, r)  #<<<<<<<<<<<<<<<<<<<<< reward for each action??
                 prev_reward[b] = r
         # For action-server samplers.
         if hasattr(self, "step_buffer_np") and self.step_buffer_np is not None:
