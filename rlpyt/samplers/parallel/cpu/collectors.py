@@ -114,7 +114,6 @@ class CpuWaitResetCollector(DecorrelatingStartCollector):
             for b, env in enumerate(self.envs):
                 if self.done[b]:
                     action[b] = 0 # Record blank.
-                    # action[b] = 0  #<<<<<<<<<<<<<<<<<<< MODIFIED
                     reward[b] = 0
                     if agent_info:
                         agent_info[b] = 0
@@ -172,9 +171,9 @@ class CpuEvalCollector(BaseEvalCollector):
         observation = buffer_from_example(observations[0], len(self.envs))
         for b, o in enumerate(observations):
             observation[b] = o
-        # action = buffer_from_example(self.envs[0].action_space.null_value(), # MODIFIED<<<<<<<<<<<<<<<<<<<<<<<<<<
+        # action = buffer_from_example(self.envs[0].action_space.null_value(), # MODIFIED<<<<<<<<<<<<<<<<<<<<<<<<<< bc env.space.Discrete.null_value()
         #     len(self.envs))
-        action = buffer_from_example(np.zeros(self.envs[0].action_space.n, dtype="float32"),# Yikes <<<<<<<<<<<<<<<<<<<<<<
+        action = buffer_from_example(np.zeros(self.envs[0].action_space.n, dtype="float32"),# MODIFIED<<<<<<<<<<<<<<<<<<<<<<<<<< 
             len(self.envs))
         reward = np.zeros(len(self.envs), dtype="float32")
         obs_pyt, act_pyt, rew_pyt = torchify_buffer((observation, action, reward))
@@ -192,8 +191,8 @@ class CpuEvalCollector(BaseEvalCollector):
                     traj_infos[b] = self.TrajInfoCls()
                     o = env.reset()
                 if d:
-                    # action[b] = 0  # Next prev_action.
-                    action[b] = np.zeros(self.envs[0].action_space.n, dtype="float32") #>>>>>>>>>>>>>>> reset modificaiton
+                    action[b] = 0  # Next prev_action.
+                    # action[b] = np.zeros(self.envs[0].action_space.n, dtype="float32") #>>>>>>>>>>>>>>> reset modificaiton
                     r = 0
                     self.agent.reset_one(idx=b)
                 observation[b] = o

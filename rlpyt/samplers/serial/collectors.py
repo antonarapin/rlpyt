@@ -32,9 +32,9 @@ class SerialEvalCollector(BaseEvalCollector):
         observation = buffer_from_example(observations[0], len(self.envs))
         for b, o in enumerate(observations):
             observation[b] = o
-        # action = buffer_from_example(self.envs[0].action_space.null_value(),# Yikes <<<<<<<<<<<<<<<<<<<<<<
+        # action = buffer_from_example(self.envs[0].action_space.null_value(),# MODIFIED<<<<<<<<<<<<<<<<<<<<<<<<<< bc env.space.Discrete.null_value()
         #     len(self.envs))
-        action = buffer_from_example(np.zeros(self.envs[0].action_space.n, dtype="float32"),# Yikes <<<<<<<<<<<<<<<<<<<<<<
+        action = buffer_from_example(np.zeros(self.envs[0].action_space.n, dtype="float32"),# MODIFIED<<<<<<<<<<<<<<<<<<<<<<<<<<
             len(self.envs))
         reward = np.zeros(len(self.envs), dtype="float32")
         obs_pyt, act_pyt, rew_pyt = torchify_buffer((observation, action, reward))
@@ -52,8 +52,8 @@ class SerialEvalCollector(BaseEvalCollector):
                     traj_infos[b] = self.TrajInfoCls()
                     o = env.reset()
                 if d:
-                    # action[b] = 0  # Prev_action for next step. modified <<<<<<<<<<<<<<<<<<<<<<
-                    action[b] = np.zeros(self.envs[0].action_space.n, dtype="float32") # action reset for next step. modified <<<<<<<<<<<<<<<<<<<<<<
+                    action[b] = 0  # Prev_action for next step. modified <<<<<<<<<<<<<<<<<<<<<<
+                    # action[b] = np.zeros(self.envs[0].action_space.n, dtype="float32") # action reset for next step. modified <<<<<<<<<<<<<<<<<<<<<<
                     r = 0
                     self.agent.reset_one(idx=b)
                 observation[b] = o
